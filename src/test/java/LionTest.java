@@ -1,7 +1,7 @@
-import com.example.Feline;
 import com.example.Lion;
 import com.example.Predator;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -13,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -20,10 +21,15 @@ public class LionTest {
 
     @Mock
     Predator predator;
+    private Lion lion;
+
+    @BeforeEach
+    void newLion() throws Exception {
+        lion = new Lion(predator, "Самец");
+    }
 
     @Test
-     void constructorSexTrue() throws Exception {
-        Lion lion = new Lion(predator, "Самец");
+     void constructorSexTrue() {
         Assertions.assertTrue(lion.doesHaveMane(), "Ошибка, при значении Самец hasMane = true");
 
     }
@@ -41,22 +47,25 @@ public class LionTest {
 
     @Test
      void getFoodReturnFood() throws Exception {
-        Predator predator = new Feline();
-        Lion lion = new Lion(predator, "Самец");
+        Mockito.when(predator.eatMeat()).thenReturn(List.of("Животные", "Птицы", "Рыба"));
         List<String> expected = List.of("Животные", "Птицы", "Рыба");
         List<String> actual = lion.getFood();
         Assertions.assertEquals(expected, actual, "Ошибка! У хищника не может быть такого питания");
     }
     @Test
-    void getKittensReturnLionKittens() throws Exception {
-        Predator predator = new Feline();
-        Lion lion = new Lion(predator, "Самец");
+    void getKittensReturnLionKittens(){
+        Mockito.when(predator.getKittens(3)).thenReturn(3);
         int actual = lion.getKittens(3);
-        Assertions.assertEquals(3, actual, "Ошибка! Передано неверное количество котят");
+        int expected = 3;
+        Assertions.assertEquals(expected, actual, "Ошибка! Передано неверное количество котят");
     }
 }
-
+//Класс с параметризованными тестами
+@ExtendWith(MockitoExtension.class)
 class LionParametersTest {
+
+    @Mock
+    Predator predator;
 
     private static Stream<Arguments> constructorSexTest() {
         return Stream.of(
@@ -75,16 +84,15 @@ class LionParametersTest {
 
     private static Stream<Arguments> countKittens() {
         return Stream.of(
-                Arguments.of(3, "Самец", 3),
-                Arguments.of(5, "Самка", 5)
+                Arguments.of(8, 8)
         );
     }
 
     @ParameterizedTest
     @MethodSource("countKittens")
-    void getKittensReturnLionKittens(int count,String sex, int expected) throws Exception {
-        Predator predator = new Feline();
-        Lion lion = new Lion(predator, sex);
+    void getKittensReturnLionKittens(int count, int expected) throws Exception {
+        Lion lion = new Lion(predator, "Самец");
+        Mockito.when(predator.getKittens(count)).thenReturn(count);
         int actual = lion.getKittens(count);
         Assertions.assertEquals(expected, actual, "Ошибка! Передано неверное количество котят");
     }
