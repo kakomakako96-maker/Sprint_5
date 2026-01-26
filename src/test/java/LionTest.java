@@ -1,5 +1,6 @@
 import com.example.Lion;
 import com.example.Predator;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,11 +63,22 @@ public class LionTest {
     }
 }
 //Класс с параметризованными тестами
-@ExtendWith(MockitoExtension.class)
 class LionParametersTest {
 
     @Mock
     Predator predator;
+
+    private AutoCloseable mockCloseable;
+
+    @BeforeEach
+    void initMocks() {
+        mockCloseable = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        mockCloseable.close();
+    }
 
     private static Stream<Arguments> constructorSexTest() {
         return Stream.of(

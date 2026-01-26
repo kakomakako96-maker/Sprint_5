@@ -17,6 +17,7 @@ public class CatTest {
 
     @Mock
     Predator predator;
+
     private Cat cat;
 
     @BeforeEach
@@ -34,7 +35,7 @@ public class CatTest {
     @Test
     public void getFoodReturnFood() throws Exception {
         List<String> expected = List.of("Животные", "Птицы", "Рыба");
-        Mockito.when(cat.getFood()).thenReturn(expected);
+        Mockito.when(predator.eatMeat()).thenReturn(expected);
         List<String> actual = cat.getFood();
         Assertions.assertEquals(expected, actual, "Ошибка! У хищника не может быть такого питания");
     }
